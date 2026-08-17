@@ -1,0 +1,21 @@
+#include <iostream>
+#include <cmath>
+using namespace std ;
+
+int main()
+
+{
+    float s, area, p, q, r, sqrt ;
+    cout<<"Escribe el valor de p: " ;
+    cin>> p ;
+    cout<<"Escribe el valor de q: " ;
+    cin>> q ;
+    cout<<"Escribe el valor de r: " ; 
+    cin>> r ;
+    s = (p+q+r)/2 ;
+    area = sqrt *(s*(s-p)*(s-q)*(s-r)) ;
+    cout<<"El area es: "<<area ;
+    return 0 ;
+}
+    
+    
