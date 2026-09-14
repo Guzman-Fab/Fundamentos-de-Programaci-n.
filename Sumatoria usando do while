@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int n, suma = 0;
+    int i = 1; 
+    
+    cout << "Ingrese el valor de n:" << endl;
+    cin >> n;
+    
+    
+    if (n >= 1) { 
+        do {
+            suma += i;
+            i++; 
+        } while (i <= n);
+    }
+    
+    cout << "La sumatoria de 1 a " << n << " es: " << suma << endl;
+    return 0;
+}
