@@ -1,0 +1,95 @@
+#include <iostream>
+using namespace std;
+
+// prototipos
+void menu();
+void primerapregunta(int edad, int nota);
+int precio(int x);
+float totalapagar(int cantidad, float precio);
+
+int main()
+{
+    int edad, nota, peso, b;
+    int opcion;
+    float a, total;
+
+    do {
+        menu();
+        cin >> opcion;
+
+        switch (opcion)
+        {
+        case 1:
+            cout << "Ingrese la edad: ";
+            cin >> edad;
+            cout << "Ingrese la nota: ";
+            cin >> nota;
+            primerapregunta(edad, nota);
+            break;
+        case 2:
+            cout << "Ingrese el peso: ";
+            cin >> peso;
+            cout << "El costo es: " << precio(peso);
+            break;
+        case 3:
+            cout << "Ingrese la cantidad: ";
+            cin >> b;
+            cout << "Ingrese el precio: ";
+            cin >> a;
+            total = totalapagar(b, a);
+            cout << "El costo total es: " << total;
+            break;
+        case 0:
+            cout << "Saliendo del Menu.";
+            break;
+        default:
+            cout << "Error de opcion.";
+            break;
+        }
+        system("pause");
+        system("cls");
+    } while (opcion != 0);
+
+    return 0;
+}   // <-- aquí termina main
+
+// definiciones
+void menu() {
+    cout << "\t\t   MENU    \n";
+    cout << "\t\t===========\n";
+    cout << "1. Determinar la aprobacion.\n";
+    cout << "2. Determinar el precio.\n";
+    cout << "3. Calcular el total a pagar.\n";
+    cout << "0. Salir.\n";
+    cout << "Opcion: ";
+}
+
+void primerapregunta(int edad, int nota) {
+    if (nota >= 51)
+        cout << "Aprobado.";
+    else
+        cout << "Desaprobado.";
+}
+
+int precio(int x) {
+    int costo;
+    if (x <= 2)
+        costo = 15;
+    else if (x <= 5)
+        costo = 25;
+    else if (x <= 10)
+        costo = 40;
+    else
+        costo = 60;
+    return costo;
+}
+
+float totalapagar(int cantidad, float precio) {
+    float resultado, descuento;
+    if (cantidad < 3)
+        descuento = (cantidad * precio) * 0.1;
+    else
+        descuento = (cantidad * precio) * 0.2;
+    resultado = (cantidad * precio) - descuento;
+    return resultado;
+}
