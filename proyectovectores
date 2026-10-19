@@ -1,0 +1,93 @@
+#include <iostream>
+#define MAX 100
+
+using namespace std; 
+
+//Prototipos de funciones que se utilizaran con los vectores 
+
+void menu();
+void cargar(int vec[], int n); 
+void mostrar(int vec[], int n);
+void burbuja(int vec[], int m);
+
+//Definimos el menu que vamos a usar 
+
+int main()
+{
+    int n, A[MAX];
+    int opcion;
+
+    do {
+        menu();
+        cin >> opcion;
+
+        switch (opcion)
+        {
+        case 1:
+            do {
+                cout << "Ingresar el tamaño del primer vector:";
+                cin >> n;
+            } while ((n <= 0) || (n > MAX));
+            cargar(A, n);
+            break;
+        case 2:
+            mostrar(A, n);
+            break;
+        case 3:
+            burbuja(A, n);
+            break;
+        case 0:
+            cout << "Saliendo del Menu.";
+            break;
+        default:
+            cout << "Error de opcion.";
+            break;
+        }
+        system("pause");
+        system("cls");
+    } while (opcion != 0);
+
+    return 0;
+}
+
+//Definimos las funciones usadas. 
+
+void menu() {
+    cout << "\t\t   MENU    \n";
+    cout << "\t\t===========\n";
+    cout << "1. Determinar la opcion cargar.     \n";
+    cout << "2. Determinar la opcion mostrar.    \n";
+    cout << "3. Determinar la opcion clasificar. \n";
+    cout << "0. Salir.\n";
+    cout << "Opcion: ";
+}
+
+void cargar(int vec[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Vector[" << i << "]= ";
+        cin >> vec[i];
+    }
+}
+
+void mostrar(int vec[], int n)
+{
+    for (int i = 0; i < n; i++)
+        cout << "Vector[" << i << "]= " << vec[i] << endl;
+}
+
+void burbuja(int vec[], int m)
+{
+    int aux;
+    for (int i = 0; i < m - 1; i++)
+    {
+        for (int j = i + 1; j < m; j++)
+            if (vec[i] > vec[j])
+            {
+                aux = vec[j];
+                vec[j] = vec[i];
+                vec[i] = aux;
+            }
+    }
+}
