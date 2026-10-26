@@ -1,0 +1,31 @@
+#include <iostream>
+using namespace std;
+void actualizar(int& valor, int incremento);
+int calcular(int n);
+
+int main() {
+    int numero = 4;
+    int aumento = 3;
+
+    int total = calcular(numero);
+    cout << numero << "" << total << endl;
+
+    actualizar(numero, aumento);
+    cout << numero << "" << aumento << endl;
+
+    return 0;
+}
+
+int calcular(int n)
+{
+    int suma = 0;
+    for (int i = 1; i <= n; i++) {
+        suma = suma + 1;
+    }
+    return suma;
+}
+
+void actualizar(int& valor, int incremento) {
+    valor = valor + incremento;
+    incremento = incremento * 2;
+}
