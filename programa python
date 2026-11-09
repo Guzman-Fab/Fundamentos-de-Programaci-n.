@@ -1,0 +1,305 @@
+# VECTORES
+usuarios = []
+personas = []
+
+
+# VALIDAR FORMATO DE GMAIL
+def validar_gmail(correo):
+    correo = correo.strip().lower()
+    if not correo.endswith("@gmail.com"):
+        return False
+
+    # Verifica que existan caracteres antes del dominio y que no tenga espacios
+    usuario_local = correo[:-10]
+    if len(usuario_local) == 0 or " " in correo:
+        return False
+
+    return True
+
+
+# VALIDAR FECHA DE NACIMIENTO
+def validar_fecha(fecha):
+    if len(fecha) != 10 or fecha[2] != "/" or fecha[5] != "/":
+        return False
+
+    if not (fecha[0:2] + fecha[3:5] + fecha[6:10]).isdigit():
+        return False
+
+    dia = int(fecha[0:2])
+    mes = int(fecha[3:5])
+    anio = int(fecha[6:10])
+
+    if anio < 1:
+        return False
+
+    if mes < 1 or mes > 12:
+        return False
+
+    # Verificar cantidad de dias del mes
+    if mes == 2:
+        # Verificar año bisiesto
+        if anio % 400 == 0 or (anio % 4 == 0 and anio % 100 != 0):
+            dias = 29
+        else:
+            dias = 28
+    elif mes == 4 or mes == 6 or mes == 9 or mes == 11:
+        dias = 30
+    else:
+        dias = 31
+
+    if dia < 1 or dia > dias:
+        return False
+
+    return True
+
+
+# REGISTRAR USUARIO (TRADICIONAL O GMAIL)
+def registrar_usuario(con_gmail=False):
+    if con_gmail:
+        print("\n--- REGISTRAR USUARIO CON GMAIL ---")
+        correo = input("Ingrese su cuenta de Gmail: ").strip().lower()
+
+        while not validar_gmail(correo):
+            print("Correo invalido. Debe ser un correo valido terminado en @gmail.com.")
+            correo = input("Ingrese su cuenta de Gmail (o presione Enter para salir): ").strip().lower()
+            if correo == "":
+                return
+
+        usuario_id = correo
+        tipo = "GMAIL"
+    else:
+        print("\n--- REGISTRAR USUARIO TRADICIONAL ---")
+        usuario_id = input("Ingrese usuario: ").strip()
+        tipo = "ESTANDAR"
+
+    # Verificar si el usuario o correo ya existe
+    for u in usuarios:
+        if u[0] == usuario_id:
+            print("El usuario o correo ya existe registrado.")
+            return
+
+    clave = input("Ingrese contraseña: ")
+    usuarios.append([usuario_id, clave, tipo])
+    print(f"Usuario registrado correctamente ({tipo}).")
+
+
+# LISTAR USUARIOS
+def listar_usuarios():
+    print("\n--- LISTA DE USUARIOS ---")
+
+    if len(usuarios) == 0:
+        print("No hay usuarios registrados.")
+    else:
+        for i in range(len(usuarios)):
+            print("\nUsuario Nro:", i + 1)
+            print("Usuario/Correo:", usuarios[i][0])
+            print("Tipo de cuenta:", usuarios[i][2])
+
+
+# MODIFICAR USUARIO
+def modificar_usuario():
+    print("\n--- MODIFICAR USUARIO ---")
+    nombre = input("Ingrese el usuario o correo que desea modificar: ").strip()
+
+    for u in usuarios:
+        if u[0] == nombre:
+            if u[2] == "GMAIL":
+                nuevo_correo = input("Nuevo correo de Gmail: ").strip().lower()
+                if not validar_gmail(nuevo_correo):
+                    print("Correo invalido.")
+                    return
+                u[0] = nuevo_correo
+            else:
+                u[0] = input("Nuevo nombre de usuario: ").strip()
+
+            u[1] = input("Nueva contraseña: ")
+            print("Usuario modificado correctamente.")
+            return
+
+    print("Usuario no encontrado.")
+
+
+# BORRAR USUARIO
+def borrar_usuario():
+    print("\n--- BORRAR USUARIO ---")
+    nombre = input("Ingrese el usuario o correo que desea eliminar: ").strip()
+
+    for u in usuarios:
+        if u[0] == nombre:
+            usuarios.remove(u)
+            print("Usuario eliminado correctamente.")
+            return
+
+    print("Usuario no encontrado.")
+
+
+# INICIAR SESION (TRADICIONAL O GMAIL)
+def login(con_gmail=False):
+    if con_gmail:
+        print("\n--- INICIAR SESION CON GMAIL ---")
+        usuario = input("Correo de Gmail: ").strip().lower()
+        if not validar_gmail(usuario):
+            print("Formato de correo Gmail invalido.")
+            return False
+    else:
+        print("\n--- INICIAR SESION TRADICIONAL ---")
+        usuario = input("Usuario: ").strip()
+
+    clave = input("Contraseña: ")
+
+    for u in usuarios:
+        if u[0] == usuario and u[1] == clave:
+            if con_gmail and u[2] != "GMAIL":
+                print("Esta cuenta se registro como usuario tradicional, no con Gmail.")
+                return False
+            print("Bienvenido", usuario)
+            return True
+
+    print("Usuario, correo o contraseña incorrectos.")
+    return False
+
+
+# REGISTRAR PERSONA
+def registrar_persona():
+    print("\n--- REGISTRAR PERSONA ---")
+
+    nombre = input("Nombre: ")
+    fecha = input("Fecha de nacimiento (DD/MM/AAAA): ")
+
+    while not validar_fecha(fecha):
+        print("Fecha incorrecta. Ingrese una fecha real.")
+        fecha = input("Fecha de nacimiento (DD/MM/AAAA): ")
+
+    ci = input("CI: ")
+    direccion = input("Direccion: ")
+    telefono = input("Telefono: ")
+
+    persona = [nombre, fecha, ci, direccion, telefono]
+    personas.append(persona)
+
+    print("Persona registrada correctamente.")
+
+
+# LISTAR PERSONAS
+def listar_personas():
+    print("\n--- LISTA DE PERSONAS ---")
+
+    if len(personas) == 0:
+        print("No existen personas registradas.")
+    else:
+        for i in range(len(personas)):
+            print("\nPersona Nro:", i + 1)
+            print("Nombre:", personas[i][0])
+            print("Fecha de nacimiento:", personas[i][1])
+            print("CI:", personas[i][2])
+            print("Direccion:", personas[i][3])
+            print("Telefono:", personas[i][4])
+
+
+# BORRAR PERSONA
+def borrar_persona():
+    print("\n--- BORRAR PERSONA ---")
+    ci = input("Ingrese el CI: ")
+
+    for p in personas:
+        if p[2] == ci:
+            personas.remove(p)
+            print("Persona eliminada correctamente.")
+            return
+
+    print("Persona no encontrada.")
+
+
+# MODIFICAR PERSONA
+def modificar_persona():
+    print("\n--- MODIFICAR PERSONA ---")
+    ci = input("Ingrese el CI de la persona: ")
+
+    for p in personas:
+        if p[2] == ci:
+            p[0] = input("Nuevo nombre: ")
+
+            fecha = input("Nueva fecha de nacimiento (DD/MM/AAAA): ")
+
+            while not validar_fecha(fecha):
+                print("Fecha incorrecta. Ingrese una fecha real.")
+                fecha = input("Nueva fecha de nacimiento (DD/MM/AAAA): ")
+
+            p[1] = fecha
+            p[2] = input("Nuevo CI: ")
+            p[3] = input("Nueva direccion: ")
+            p[4] = input("Nuevo telefono: ")
+
+            print("Persona modificada correctamente.")
+            return
+
+    print("Persona no encontrada.")
+
+
+# MENU DE PERSONAS
+def menu_personas():
+    while True:
+        print("\n===== MENU DE PERSONAS =====")
+        print("1. Registrar persona")
+        print("2. Listar personas")
+        print("3. Modificar persona")
+        print("4. Borrar persona")
+        print("5. Cerrar sesion")
+
+        op = input("Seleccione una opcion: ")
+
+        if op == "1":
+            registrar_persona()
+        elif op == "2":
+            listar_personas()
+        elif op == "3":
+            modificar_persona()
+        elif op == "4":
+            borrar_persona()
+        elif op == "5":
+            print("Sesion cerrada.")
+            break
+        else:
+            print("Opcion incorrecta.")
+
+
+# MENU PRINCIPAL DE USUARIOS
+def main():
+    while True:
+        print("\n===== SISTEMA DE LOGIN =====")
+        print("1. Registrar usuario tradicional")
+        print("2. Registrar con cuenta de Gmail")
+        print("3. Listar usuarios")
+        print("4. Modificar usuario")
+        print("5. Borrar usuario")
+        print("6. Iniciar sesion tradicional")
+        print("7. Iniciar sesion con Gmail")
+        print("8. Salir")
+
+        op = input("Seleccione una opcion: ")
+
+        if op == "1":
+            registrar_usuario(con_gmail=False)
+        elif op == "2":
+            registrar_usuario(con_gmail=True)
+        elif op == "3":
+            listar_usuarios()
+        elif op == "4":
+            modificar_usuario()
+        elif op == "5":
+            borrar_usuario()
+        elif op == "6":
+            if login(con_gmail=False):
+                menu_personas()
+        elif op == "7":
+            if login(con_gmail=True):
+                menu_personas()
+        elif op == "8":
+            print("Gracias por utilizar el sistema.")
+            break
+        else:
+            print("Opcion incorrecta.")
+
+
+# EJECUTAR PROGRAMA
+main()
