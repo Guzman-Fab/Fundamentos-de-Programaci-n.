@@ -1,0 +1,554 @@
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cctype>
+
+using namespace std;
+
+// ESTRUCTURAS
+struct Usuario {
+    string usuario_id;
+    string clave;
+    string tipo;
+};
+
+struct Persona {
+    string nombre;
+    string fecha;
+    string ci;
+    string direccion;
+    string telefono;
+};
+
+// VECTORES
+vector<Usuario> usuarios;
+vector<Persona> personas;
+
+
+// VALIDAR FORMATO DE GMAIL
+bool validar_gmail(string correo) {
+
+    for (int i = 0; i < correo.length(); i++) {
+        correo[i] = tolower(correo[i]);
+    }
+
+    if (correo.length() < 11 ||
+        correo.substr(correo.length() - 10) != "@gmail.com") {
+        return false;
+    }
+
+    string usuario_local = correo.substr(0, correo.length() - 10);
+
+    if (usuario_local.empty()) {
+        return false;
+    }
+
+    for (int i = 0; i < correo.length(); i++) {
+        if (isspace(correo[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+// VALIDAR FECHA DE NACIMIENTO
+bool validar_fecha(string fecha) {
+
+    if (fecha.length() != 10 ||
+        fecha[2] != '/' ||
+        fecha[5] != '/') {
+        return false;
+    }
+
+    for (int i = 0; i < fecha.length(); i++) {
+        if (i != 2 && i != 5 && !isdigit(fecha[i])) {
+            return false;
+        }
+    }
+
+    int dia = stoi(fecha.substr(0, 2));
+    int mes = stoi(fecha.substr(3, 2));
+    int anio = stoi(fecha.substr(6, 4));
+
+    if (anio < 1) {
+        return false;
+    }
+
+    if (mes < 1 || mes > 12) {
+        return false;
+    }
+
+    int dias;
+
+    // VERIFICAR CANTIDAD DE DIAS DEL MES
+    if (mes == 2) {
+
+        // VERIFICAR AÑO BISIESTO
+        if (anio % 400 == 0 ||
+            (anio % 4 == 0 && anio % 100 != 0)) {
+            dias = 29;
+        }
+        else {
+            dias = 28;
+        }
+
+    }
+    else if (mes == 4 || mes == 6 ||
+             mes == 9 || mes == 11) {
+        dias = 30;
+    }
+    else {
+        dias = 31;
+    }
+
+    if (dia < 1 || dia > dias) {
+        return false;
+    }
+
+    return true;
+}
+
+
+// REGISTRAR USUARIO (TRADICIONAL O GMAIL)
+void registrar_usuario(bool con_gmail = false) {
+
+    string usuario_id;
+    string tipo;
+
+    if (con_gmail) {
+
+        cout << "\n--- REGISTRAR USUARIO CON GMAIL ---" << endl;
+        cout << "Ingrese su cuenta de Gmail: ";
+        getline(cin, usuario_id);
+
+        while (!validar_gmail(usuario_id)) {
+
+            cout << "Correo invalido. Debe terminar en @gmail.com." << endl;
+            cout << "Ingrese su cuenta de Gmail (Enter para salir): ";
+            getline(cin, usuario_id);
+
+            if (usuario_id.empty()) {
+                return;
+            }
+        }
+
+        tipo = "GMAIL";
+    }
+    else {
+
+        cout << "\n--- REGISTRAR USUARIO TRADICIONAL ---" << endl;
+        cout << "Ingrese usuario: ";
+        getline(cin, usuario_id);
+
+        tipo = "ESTANDAR";
+    }
+
+    // VERIFICAR SI EL USUARIO YA EXISTE
+    for (int i = 0; i < usuarios.size(); i++) {
+
+        if (usuarios[i].usuario_id == usuario_id) {
+            cout << "El usuario o correo ya existe registrado." << endl;
+            return;
+        }
+    }
+
+    string clave;
+
+    cout << "Ingrese contraseña: ";
+    getline(cin, clave);
+
+    Usuario nuevo;
+
+    nuevo.usuario_id = usuario_id;
+    nuevo.clave = clave;
+    nuevo.tipo = tipo;
+
+    usuarios.push_back(nuevo);
+
+    cout << "Usuario registrado correctamente (" << tipo << ")." << endl;
+}
+
+
+// LISTAR USUARIOS
+void listar_usuarios() {
+
+    cout << "\n--- LISTA DE USUARIOS ---" << endl;
+
+    if (usuarios.empty()) {
+        cout << "No hay usuarios registrados." << endl;
+    }
+    else {
+
+        for (int i = 0; i < usuarios.size(); i++) {
+
+            cout << "\nUsuario Nro: " << i + 1 << endl;
+            cout << "Usuario/Correo: " << usuarios[i].usuario_id << endl;
+            cout << "Tipo de cuenta: " << usuarios[i].tipo << endl;
+        }
+    }
+}
+
+
+// MODIFICAR USUARIO
+void modificar_usuario() {
+
+    cout << "\n--- MODIFICAR USUARIO ---" << endl;
+
+    string nombre;
+
+    cout << "Ingrese el usuario o correo que desea modificar: ";
+    getline(cin, nombre);
+
+    for (int i = 0; i < usuarios.size(); i++) {
+
+        if (usuarios[i].usuario_id == nombre) {
+
+            if (usuarios[i].tipo == "GMAIL") {
+
+                string nuevo_correo;
+
+                cout << "Nuevo correo de Gmail: ";
+                getline(cin, nuevo_correo);
+
+                if (!validar_gmail(nuevo_correo)) {
+                    cout << "Correo invalido." << endl;
+                    return;
+                }
+
+                usuarios[i].usuario_id = nuevo_correo;
+            }
+            else {
+
+                cout << "Nuevo nombre de usuario: ";
+                getline(cin, usuarios[i].usuario_id);
+            }
+
+            cout << "Nueva contraseña: ";
+            getline(cin, usuarios[i].clave);
+
+            cout << "Usuario modificado correctamente." << endl;
+            return;
+        }
+    }
+
+    cout << "Usuario no encontrado." << endl;
+}
+
+
+// BORRAR USUARIO
+void borrar_usuario() {
+
+    cout << "\n--- BORRAR USUARIO ---" << endl;
+
+    string nombre;
+
+    cout << "Ingrese el usuario o correo que desea eliminar: ";
+    getline(cin, nombre);
+
+    for (int i = 0; i < usuarios.size(); i++) {
+
+        if (usuarios[i].usuario_id == nombre) {
+
+            usuarios.erase(usuarios.begin() + i);
+
+            cout << "Usuario eliminado correctamente." << endl;
+            return;
+        }
+    }
+
+    cout << "Usuario no encontrado." << endl;
+}
+
+
+// INICIAR SESION (TRADICIONAL O GMAIL)
+bool login(bool con_gmail = false) {
+
+    string usuario;
+    string clave;
+
+    if (con_gmail) {
+
+        cout << "\n--- INICIAR SESION CON GMAIL ---" << endl;
+        cout << "Correo de Gmail: ";
+        getline(cin, usuario);
+
+        if (!validar_gmail(usuario)) {
+            cout << "Formato de correo Gmail invalido." << endl;
+            return false;
+        }
+
+    }
+    else {
+
+        cout << "\n--- INICIAR SESION TRADICIONAL ---" << endl;
+        cout << "Usuario: ";
+        getline(cin, usuario);
+    }
+
+    cout << "Contraseña: ";
+    getline(cin, clave);
+
+    for (int i = 0; i < usuarios.size(); i++) {
+
+        if (usuarios[i].usuario_id == usuario &&
+            usuarios[i].clave == clave) {
+
+            if (con_gmail && usuarios[i].tipo != "GMAIL") {
+
+                cout << "Esta cuenta se registro como usuario tradicional, no con Gmail." << endl;
+                return false;
+            }
+
+            cout << "Bienvenido " << usuario << endl;
+            return true;
+        }
+    }
+
+    cout << "Usuario, correo o contraseña incorrectos." << endl;
+    return false;
+}
+
+
+// REGISTRAR PERSONA
+void registrar_persona() {
+
+    cout << "\n--- REGISTRAR PERSONA ---" << endl;
+
+    Persona nueva;
+
+    cout << "Nombre: ";
+    getline(cin, nueva.nombre);
+
+    cout << "Fecha de nacimiento (DD/MM/AAAA): ";
+    getline(cin, nueva.fecha);
+
+    while (!validar_fecha(nueva.fecha)) {
+
+        cout << "Fecha incorrecta. Ingrese una fecha real." << endl;
+        cout << "Fecha de nacimiento (DD/MM/AAAA): ";
+        getline(cin, nueva.fecha);
+    }
+
+    cout << "CI: ";
+    getline(cin, nueva.ci);
+
+    cout << "Direccion: ";
+    getline(cin, nueva.direccion);
+
+    cout << "Telefono: ";
+    getline(cin, nueva.telefono);
+
+    personas.push_back(nueva);
+
+    cout << "Persona registrada correctamente." << endl;
+}
+
+
+// LISTAR PERSONAS
+void listar_personas() {
+
+    cout << "\n--- LISTA DE PERSONAS ---" << endl;
+
+    if (personas.empty()) {
+
+        cout << "No existen personas registradas." << endl;
+    }
+    else {
+
+        for (int i = 0; i < personas.size(); i++) {
+
+            cout << "\nPersona Nro: " << i + 1 << endl;
+            cout << "Nombre: " << personas[i].nombre << endl;
+            cout << "Fecha de nacimiento: " << personas[i].fecha << endl;
+            cout << "CI: " << personas[i].ci << endl;
+            cout << "Direccion: " << personas[i].direccion << endl;
+            cout << "Telefono: " << personas[i].telefono << endl;
+        }
+    }
+}
+
+
+// BORRAR PERSONA
+void borrar_persona() {
+
+    cout << "\n--- BORRAR PERSONA ---" << endl;
+
+    string ci;
+
+    cout << "Ingrese el CI: ";
+    getline(cin, ci);
+
+    for (int i = 0; i < personas.size(); i++) {
+
+        if (personas[i].ci == ci) {
+
+            personas.erase(personas.begin() + i);
+
+            cout << "Persona eliminada correctamente." << endl;
+            return;
+        }
+    }
+
+    cout << "Persona no encontrada." << endl;
+}
+
+
+// MODIFICAR PERSONA
+void modificar_persona() {
+
+    cout << "\n--- MODIFICAR PERSONA ---" << endl;
+
+    string ci;
+
+    cout << "Ingrese el CI de la persona: ";
+    getline(cin, ci);
+
+    for (int i = 0; i < personas.size(); i++) {
+
+        if (personas[i].ci == ci) {
+
+            cout << "Nuevo nombre: ";
+            getline(cin, personas[i].nombre);
+
+            string fecha;
+
+            cout << "Nueva fecha de nacimiento (DD/MM/AAAA): ";
+            getline(cin, fecha);
+
+            while (!validar_fecha(fecha)) {
+
+                cout << "Fecha incorrecta. Ingrese una fecha real." << endl;
+                cout << "Nueva fecha de nacimiento (DD/MM/AAAA): ";
+                getline(cin, fecha);
+            }
+
+            personas[i].fecha = fecha;
+
+            cout << "Nuevo CI: ";
+            getline(cin, personas[i].ci);
+
+            cout << "Nueva direccion: ";
+            getline(cin, personas[i].direccion);
+
+            cout << "Nuevo telefono: ";
+            getline(cin, personas[i].telefono);
+
+            cout << "Persona modificada correctamente." << endl;
+            return;
+        }
+    }
+
+    cout << "Persona no encontrada." << endl;
+}
+
+
+// MENU DE PERSONAS
+void menu_personas() {
+
+    while (true) {
+
+        cout << "\n===== MENU DE PERSONAS =====" << endl;
+        cout << "1. Registrar persona" << endl;
+        cout << "2. Listar personas" << endl;
+        cout << "3. Modificar persona" << endl;
+        cout << "4. Borrar persona" << endl;
+        cout << "5. Cerrar sesion" << endl;
+
+        string op;
+
+        cout << "Seleccione una opcion: ";
+        getline(cin, op);
+
+        if (op == "1") {
+            registrar_persona();
+        }
+        else if (op == "2") {
+            listar_personas();
+        }
+        else if (op == "3") {
+            modificar_persona();
+        }
+        else if (op == "4") {
+            borrar_persona();
+        }
+        else if (op == "5") {
+
+            cout << "Sesion cerrada." << endl;
+            break;
+        }
+        else {
+            cout << "Opcion incorrecta." << endl;
+        }
+    }
+}
+
+
+// MENU PRINCIPAL DE USUARIOS
+void main() {
+
+    while (true) {
+
+        cout << "\n===== SISTEMA DE LOGIN =====" << endl;
+        cout << "1. Registrar usuario tradicional" << endl;
+        cout << "2. Registrar con cuenta de Gmail" << endl;
+        cout << "3. Listar usuarios" << endl;
+        cout << "4. Modificar usuario" << endl;
+        cout << "5. Borrar usuario" << endl;
+        cout << "6. Iniciar sesion tradicional" << endl;
+        cout << "7. Iniciar sesion con Gmail" << endl;
+        cout << "8. Salir" << endl;
+
+        string op;
+
+        cout << "Seleccione una opcion: ";
+        getline(cin, op);
+
+        if (op == "1") {
+            registrar_usuario(false);
+        }
+        else if (op == "2") {
+            registrar_usuario(true);
+        }
+        else if (op == "3") {
+            listar_usuarios();
+        }
+        else if (op == "4") {
+            modificar_usuario();
+        }
+        else if (op == "5") {
+            borrar_usuario();
+        }
+        else if (op == "6") {
+
+            if (login(false)) {
+                menu_personas();
+            }
+        }
+        else if (op == "7") {
+
+            if (login(true)) {
+                menu_personas();
+            }
+        }
+        else if (op == "8") {
+
+            cout << "Gracias por utilizar el sistema." << endl;
+            break;
+        }
+        else {
+            cout << "Opcion incorrecta." << endl;
+        }
+    }
+}
+
+
+// EJECUTAR PROGRAMA
+int main() {
+
+    main();
+
+    return 0;
+}
