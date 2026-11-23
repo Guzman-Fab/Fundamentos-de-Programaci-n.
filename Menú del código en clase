@@ -1,0 +1,99 @@
+
+#include <iostream>
+using namespace std;
+
+void mostrarPromedios(double A[], int n);
+void ingresarDatos(double A[], int &n);
+void menu();
+
+int main() {
+    menu();
+    return 0;
+}
+
+// INGRESAR DATOS
+void ingresarDatos(double A[], int &n) {
+
+    cout << "\nTamano del arreglo: ";
+    cin >> n;
+
+    if (n < 1 || n > 100) {
+        cout << "Cantidad invalida. Ingrese entre 1 y 100." << endl;
+        n = 0;
+        return;
+    }
+
+    cout << "Ingresa los " << n << " numeros:" << endl;
+
+    for (int i = 0; i < n; i++) {
+        cin >> A[i];
+    }
+
+    cout << "Datos ingresados correctamente." << endl;
+}
+
+// MOSTRAR PROMEDIOS
+void mostrarPromedios(double A[], int n) {
+
+    if (n < 3) {
+        cout << "El arreglo debe tener al menos 3 elementos." << endl;
+        return;
+    }
+
+    cout << "\n--- PROMEDIOS ---" << endl;
+
+    for (int i = 0; i <= n - 3; i++) {
+
+        double promedio = (A[i] + A[i+1] + A[i+2]) / 3.0;
+
+        cout << "P" << i + 1 << " = " << promedio << endl;
+    }
+}
+
+// MENU PRINCIPAL
+void menu() {
+
+    int op;
+    int n = 0;
+    double A[100];
+
+    do {
+
+        cout << "\n===== MENU PRINCIPAL =====" << endl;
+        cout << "1. Ingresar arreglo" << endl;
+        cout << "2. Mostrar promedios" << endl;
+        cout << "3. Volver a ingresar datos" << endl;
+        cout << "4. Salir" << endl;
+
+        cout << "\nSeleccione una opcion: ";
+        cin >> op;
+
+        switch (op) {
+
+            case 1:
+                ingresarDatos(A, n);
+                break;
+
+            case 2:
+                if (n == 0) {
+                    cout << "Primero debe ingresar los datos." << endl;
+                }
+                else {
+                    mostrarPromedios(A, n);
+                }
+                break;
+
+            case 3:
+                ingresarDatos(A, n);
+                break;
+
+            case 4:
+                cout << "Gracias por utilizar el programa." << endl;
+                break;
+
+            default:
+                cout << "Opcion incorrecta. Intente nuevamente." << endl;
+        }
+
+    } while (op != 4);
+}
