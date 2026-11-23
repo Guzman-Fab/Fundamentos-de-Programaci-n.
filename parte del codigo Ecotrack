@@ -1,0 +1,168 @@
+// Parte de Fabian CMO, 
+//Se declararan 3 funciones principales las cuales son registrar consultar y mostrar estblecimiento. 
+
+
+#include <iostream>
+#include <string>
+#include <limits> // en C++ sirve para consultar las propiedades y los límites de los tipos de datos numéricos (como int, double, char o bool) según la plataforma y el compilador en el que se ejecuta el programa.
+
+using namespace std;
+
+const int MAX = 100;//Capacidad maxima de establecimientos 
+
+// Arreglos para almacenar los datos
+string nombres[MAX];
+string nit[MAX];
+string direcciones[MAX];
+string responsables[MAX];
+string telefonos[MAX];
+string correos[MAX];
+
+// Contador de establecimientos
+int cantidadEstablecimientos = 0;
+
+// Prototipos de funciones
+void registrarEstablecimiento();
+void consultarEstablecimiento();
+void mostrarDatosEstablecimiento(int indice);
+
+// Funcion principal
+int main() {
+
+    int opcion;
+
+    do {
+        cout << "\n========================================\n";
+        cout << "              ECOTRACK\n";
+        cout << "========================================\n";
+        cout << "1. Registrar establecimiento\n";
+        cout << "2. Consultar establecimiento\n";
+        cout << "3. Salir\n";
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        switch (opcion) {
+
+        case 1:
+            registrarEstablecimiento();
+            break;
+
+        case 2:
+            consultarEstablecimiento();
+            break;
+
+        case 3:
+            cout << "\nSaliendo de EcoTrack...\n";
+            break;
+
+        default:
+            cout << "\nOpcion incorrecta.\n";
+        }
+
+    } while (opcion != 3);
+
+    return 0;
+}
+
+// ========================================
+// REGISTRO DE ESTABLECIMIENTOS
+// ========================================
+
+void registrarEstablecimiento() {
+
+    if (cantidadEstablecimientos >= MAX) {
+        cout << "\nNo hay espacio disponible.\n";
+        return;
+    }
+
+    int i = cantidadEstablecimientos;
+
+    cout << "\n================================\n";
+    cout << "   REGISTRO DE ESTABLECIMIENTO\n";
+    cout << "================================\n";
+
+    cout << "Ingrese nombre: ";
+    std::getline(cin, nombres[i]);
+
+    cout << "Ingrese NIT: ";
+    std::getline(cin, nit[i]);
+
+    cout << "Ingrese direccion: ";
+    std::getline(cin, direcciones[i]);
+
+    cout << "Ingrese responsable: ";
+    std::getline(cin, responsables[i]);
+
+    cout << "Ingrese telefono: ";
+    std::getline(cin, telefonos[i]);
+
+    cout << "Ingrese correo electronico: ";
+    std::getline(cin, correos[i]);
+
+    cantidadEstablecimientos++;
+
+    cout << "\nEstablecimiento registrado correctamente.\n";
+}
+
+// ========================================
+// CONSULTA DE ESTABLECIMIENTOS
+// ========================================
+
+void consultarEstablecimiento() {
+
+    if (cantidadEstablecimientos == 0) {
+        cout << "\nNo existen establecimientos registrados.\n";
+        return;
+    }
+
+    cout << "\n================================\n";
+    cout << "   ESTABLECIMIENTOS REGISTRADOS\n";
+    cout << "================================\n";
+
+    for (int i = 0; i < cantidadEstablecimientos; i++) {
+
+        cout << i + 1 << ". " << nombres[i] << endl;
+    }
+
+    int opcion;
+
+    cout << "\nSeleccione un establecimiento: ";
+    cin >> opcion;
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    if (opcion >= 1 && opcion <= cantidadEstablecimientos) {
+
+        mostrarDatosEstablecimiento(opcion - 1);
+
+    }
+    else {
+        cout << "\nOpcion no valida.\n";
+    }
+}
+
+// ========================================
+// VISUALIZACION DE DATOS
+// ========================================
+
+void mostrarDatosEstablecimiento(int indice) {
+
+    cout << "\n================================\n";
+    cout << "     DATOS DEL ESTABLECIMIENTO\n";
+    cout << "================================\n";
+
+    cout << "Nombre: " << nombres[indice] << endl;
+    cout << "NIT: " << nit[indice] << endl;
+    cout << "Direccion: " << direcciones[indice] << endl;
+    cout << "Responsable: " << responsables[indice] << endl;
+    cout << "Telefono: " << telefonos[indice] << endl;
+    cout << "Correo: " << correos[indice] << endl;
+
+    cout << "================================\n";
+}
+
+
+
